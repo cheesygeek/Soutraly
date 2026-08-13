@@ -4,15 +4,19 @@
   "private": true,
   "description": "Soutraly - prototype de plateforme de micro-credit P2P, simule via un chat web imitant WhatsApp",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && cp src/db/schema.sql dist/db/schema.sql",
     "start": "node dist/index.js",
     "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "better-sqlite3": "^11.3.0",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "twilio": "^5.13.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",

@@ -6,10 +6,11 @@ Plateforme de micro-credit entre particuliers (Cote d'Ivoire, XOF) : les emprunt
 demandent un pret de 30 jours (50 000 a 500 000 XOF), les preteurs les financent, la
 plateforme prend des frais et fait office de marketplace + broker.
 
-Ce prototype **simule WhatsApp via un chat web** (look et menus numerotes façon
-WhatsApp) — aucune connexion a l'API WhatsApp reelle (Meta/Twilio) pour l'instant.
-Il sert a valider la logique conversationnelle et metier avant de brancher WhatsApp
-et de lancer le pilote a 10 personnes.
+Le moteur de conversation (`dispatch()`) est partage par deux points d'entree :
+un **chat web** qui imite WhatsApp (pratique pour tester sans telephone) et un
+**webhook Twilio WhatsApp Sandbox** pour discuter avec le bot depuis un vrai
+WhatsApp — voir [Brancher WhatsApp](#brancher-whatsapp-twilio-sandbox--deploiement-railway)
+plus bas.
 
 ## Lancer le projet
 
@@ -33,10 +34,11 @@ premier lancement.
 ```
 src/
   db/          schema SQL, connexion SQLite, requetes par entite
-  config/      regles de pret (fixes) et frais (placeholders a valider)
+  config/      regles de pret (fixes), frais (placeholders a valider), config Twilio
   bot/         moteur de conversation (state machine) et un handler par etat
   services/    logique metier : demande de pret, financement, remboursement, retards
-  routes/      endpoints Express (chat, admin, dev)
+  whatsapp/    utilitaires specifiques au canal WhatsApp (normalisation de numero)
+  routes/      endpoints Express (chat web, admin, dev, webhook WhatsApp)
   jobs/        verification periodique des prets en retard
 public/        interface de chat (vanilla JS) + dashboard admin
 ```
@@ -49,8 +51,11 @@ public/        interface de chat (vanilla JS) + dashboard admin
 - **KYC** : auto-verifie a la reception d'un texte quelconque (pas de vraie
   verification de piece/contrat) — suffisant pour tester le parcours, pas pour
   un vrai pilote.
-- **WhatsApp reel** : a brancher dans une phase ulterieure (Meta Cloud API ou
-  Twilio), une fois la logique conversationnelle validee via ce chat web.
+- **WhatsApp reel** : branche via Twilio WhatsApp Sandbox (voir section dediee
+  ci-dessous). Le sandbox est gratuit mais limite a des fins de pilote — chaque
+  participant doit "join" manuellement et les sessions expirent apres 72h
+  d'inactivite. Passer a un expediteur WhatsApp de production (Twilio ou Meta
+  Cloud API) avant un vrai lancement.
 
 ## Tester le parcours de retard sans attendre 30 jours
 
@@ -65,8 +70,68 @@ curl -X POST http://localhost:3000/api/dev/loans/<ID>/backdate -H "Content-Type:
 curl -X POST http://localhost:3000/api/dev/run-late-check
 ```
 
+## Brancher WhatsApp (Twilio Sandbox) + deploiement Railway
+
+Le webhook (`POST /webhook/whatsapp`, voir [src/routes/whatsappWebhook.ts](src/routes/whatsappWebhook.ts))
+reutilise exactement le meme moteur de conversation que le chat web — aucune
+difference de logique entre les deux canaux. Pour l'activer avec de vrais
+numeros, il faut un compte Twilio et un hebergeur avec une URL publique
+HTTPS stable (Railway ici).
+
+### 1. Creer le compte Twilio et activer le Sandbox
+
+1. Creer un compte gratuit sur [twilio.com](https://www.twilio.com).
+2. Dans la Console : **Messaging → Try it out → Send a WhatsApp message** pour
+   activer le Sandbox. Noter le numero du sandbox et le code de jonction
+   (`join <mot-code>`).
+3. Sur la page d'accueil de la Console, copier l'**Auth Token** (sous le compte,
+   pas besoin de l'Account SID pour ce prototype — voir plus bas).
+
+### 2. Deployer sur Railway
+
+1. Sur [railway.app](https://railway.app) : **New Project → Deploy from GitHub repo**,
+   choisir `cheesygeek/Soutraly`.
+2. Ajouter un **Volume** au service, monte sur `/data` (persistance de la base
+   SQLite entre les redeploiements).
+3. Variables d'environnement du service :
+   - `DB_PATH=/data/soutraly.db`
+   - `TWILIO_AUTH_TOKEN=<copie depuis la Console Twilio>`
+   - `PORT` : deja injecte automatiquement par Railway, rien a faire.
+   - `PUBLIC_BASE_URL` : optionnel — si absent, le serveur utilise automatiquement
+     `RAILWAY_PUBLIC_DOMAIN` (expose par Railway). A definir explicitement si un
+     domaine personnalise est utilise.
+4. Railway detecte automatiquement `npm run build` puis `npm start` (Nixpacks).
+
+### 3. Configurer le webhook cote Twilio
+
+Une fois le premier deploiement termine et le domaine public Railway connu :
+dans la Console Twilio, Sandbox Settings → **"WHEN A MESSAGE COMES IN"** →
+`https://<domaine-railway>/webhook/whatsapp`, methode **POST**.
+
+### 4. Faire rejoindre les participants du pilote
+
+Chaque participant doit envoyer `join <mot-code>` au numero Twilio Sandbox
+depuis son propre WhatsApp avant que ses messages n'atteignent le bot — c'est
+Twilio qui intercepte ce message, rien a gerer cote code.
+
+**A savoir** : les sessions du Sandbox gratuit expirent apres **72h
+d'inactivite par participant** (il faudra renvoyer `join` apres une pause). Pas
+de limite de ce type avec un expediteur de production (payant).
+
+### Verifier la securite du webhook
+
+Chaque requete entrante est validee via la signature `X-Twilio-Signature`
+(voir `TWILIO_AUTH_TOKEN` + `PUBLIC_BASE_URL` dans
+[src/config/whatsapp.ts](src/config/whatsapp.ts)) — une requete sans signature
+valide est rejetee en 403, meme avec le bon format de donnees :
+
+```bash
+curl -X POST https://<domaine>/webhook/whatsapp -d "From=whatsapp:+225...&Body=test"
+# → 403 Signature Twilio invalide.
+```
+
 ## Scripts
 
 - `npm run dev` — serveur de developpement avec rechargement automatique
-- `npm run build` — compilation TypeScript vers `dist/`
+- `npm run build` — compilation TypeScript vers `dist/` (copie aussi `schema.sql`)
 - `npm start` — lance la version compilee
