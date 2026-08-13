@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soutraly — Chat</title>
+  <link rel="stylesheet" href="/css/chat.css" />
+</head>
+<body>
+  <div class="phone">
+    <div id="phone-screen" class="screen">
+      <div class="phone-screen-inner">
+        <h1>Soutraly</h1>
+        <p>Simulateur de conversation WhatsApp — entrez un numero de telephone pour demarrer (ou reprendre) une conversation.</p>
+        <input id="phone-input" type="text" placeholder="Ex: +225 07 00 00 00 01" autocomplete="off" />
+        <button id="phone-submit">Demarrer</button>
+      </div>
+    </div>
+
+    <div id="chat-screen" class="screen hidden">
+      <header class="chat-header">
+        <button id="switch-number" class="header-back" title="Changer de numero">&#8592;</button>
+        <div class="chat-header-title">
+          <div class="chat-header-name">Soutraly</div>
+          <div class="chat-header-status" id="chat-phone-label"></div>
+        </div>
+      </header>
+      <main id="messages" class="messages"></main>
+      <div id="quick-replies" class="quick-replies hidden"></div>
+      <footer class="composer">
+        <input id="message-input" type="text" placeholder="Message" autocomplete="off" />
+        <button id="send-button">Envoyer</button>
+      </footer>
+    </div>
+  </div>
+
+  <a class="admin-link" href="/admin.html">Vue admin →</a>
+
+  <script src="/js/chat.js"></script>
+</body>
+</html>
