@@ -1,5 +1,7 @@
 # Soutraly — Prototype
 
+Depot : [github.com/cheesygeek/Soutraly](https://github.com/cheesygeek/Soutraly)
+
 Plateforme de micro-credit entre particuliers (Cote d'Ivoire, XOF) : les emprunteurs
 demandent un pret de 30 jours (50 000 a 500 000 XOF), les preteurs les financent, la
 plateforme prend des frais et fait office de marketplace + broker.
