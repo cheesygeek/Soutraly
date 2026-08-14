@@ -50,12 +50,14 @@ public/        interface de chat (vanilla JS) + dashboard admin
 - **Frais** ([src/config/fees.ts](src/config/fees.ts)) : pourcentages placeholder,
   non issus du document produit (qui ne fixe aucun taux). A valider avant tout
   pilote avec de vrais montants.
-- **KYC** : demande desormais une vraie photo ou un PDF (piece d'identite /
-  contrat de travail), stocke sur le disque (`data/kyc-uploads/`, jamais commite
-  — voir `.gitignore`) et consultable depuis l'admin. Formats acceptes :
+- **KYC** : demande desormais de vrais documents (photo ou PDF, jamais de texte).
+  Emprunteur : piece d'identite **puis** contrat de travail (deux fichiers,
+  demandes l'un apres l'autre). Preteur : piece d'identite seule. Stockes sur le
+  disque (`data/kyc-uploads/`, jamais commite — voir `.gitignore`) et consultables
+  depuis l'admin (liens "ID" / "Contrat" separes). Formats acceptes :
   JPEG/PNG/WebP/PDF, 10 Mo max (voir [src/whatsapp/mediaStorage.ts](src/whatsapp/mediaStorage.ts)).
-  Le statut reste auto-verifie a la reception du fichier : **aucune verification
-  humaine du contenu**, ce n'est qu'une collecte de document, pas un vrai controle KYC.
+  Le statut reste auto-verifie a la reception des fichiers : **aucune verification
+  humaine du contenu**, ce n'est qu'une collecte de documents, pas un vrai controle KYC.
 - **WhatsApp reel** : branche via Twilio WhatsApp Sandbox (voir section dediee
   ci-dessous). Le sandbox est gratuit mais limite a des fins de pilote — chaque
   participant doit "join" manuellement et les sessions expirent apres 72h

@@ -10,8 +10,14 @@ export interface User {
   role: Role | null;
   kyc_status: KycStatus;
   kyc_proof_stub: string | null;
+  /** @deprecated remplace par kyc_id_media_* / kyc_contract_media_*, conserve pour les inscriptions anterieures */
   kyc_media_filename: string | null;
+  /** @deprecated voir kyc_media_filename */
   kyc_media_content_type: string | null;
+  kyc_id_media_filename: string | null;
+  kyc_id_media_content_type: string | null;
+  kyc_contract_media_filename: string | null;
+  kyc_contract_media_content_type: string | null;
   created_at: string;
 }
 
@@ -27,15 +33,29 @@ export function createUser(params: {
   phone: string;
   name: string;
   role: Role;
-  kycMediaFilename: string;
-  kycMediaContentType: string;
+  kycIdMediaFilename: string;
+  kycIdMediaContentType: string;
+  kycContractMediaFilename?: string;
+  kycContractMediaContentType?: string;
 }): User {
   const info = db
     .prepare(
-      `INSERT INTO users (phone_number, name, role, kyc_status, kyc_media_filename, kyc_media_content_type)
-       VALUES (?, ?, ?, 'verified', ?, ?)`
+      `INSERT INTO users (
+         phone_number, name, role, kyc_status,
+         kyc_id_media_filename, kyc_id_media_content_type,
+         kyc_contract_media_filename, kyc_contract_media_content_type
+       )
+       VALUES (?, ?, ?, 'verified', ?, ?, ?, ?)`
     )
-    .run(params.phone, params.name, params.role, params.kycMediaFilename, params.kycMediaContentType);
+    .run(
+      params.phone,
+      params.name,
+      params.role,
+      params.kycIdMediaFilename,
+      params.kycIdMediaContentType,
+      params.kycContractMediaFilename ?? null,
+      params.kycContractMediaContentType ?? null
+    );
   return getUserById(info.lastInsertRowid as number)!;
 }
 

@@ -7,6 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
   kyc_proof_stub TEXT,
   kyc_media_filename TEXT,
   kyc_media_content_type TEXT,
+  kyc_id_media_filename TEXT,
+  kyc_id_media_content_type TEXT,
+  kyc_contract_media_filename TEXT,
+  kyc_contract_media_content_type TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

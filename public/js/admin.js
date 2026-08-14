@@ -12,6 +12,16 @@ function fmtDate(s) {
   return s.replace("T", " ").slice(0, 16);
 }
 
+function kycLinks(u) {
+  const links = [];
+  if (u.kyc_id_media_filename) links.push(`<a href="/api/admin/kyc/${u.id}/id" target="_blank">ID</a>`);
+  if (u.kyc_contract_media_filename) links.push(`<a href="/api/admin/kyc/${u.id}/contract" target="_blank">Contrat</a>`);
+  if (links.length === 0 && u.kyc_media_filename) {
+    links.push(`<a href="/api/admin/kyc/${u.id}" target="_blank">Justificatif</a>`);
+  }
+  return links.length > 0 ? links.join(" · ") : "—";
+}
+
 async function loadOverview() {
   const res = await fetch("/api/admin/overview");
   const data = await res.json();
@@ -40,7 +50,7 @@ async function loadOverview() {
       <td>${u.phone_number}</td>
       <td>${u.role ?? "—"}</td>
       <td>${u.kyc_status}</td>
-      <td>${u.kyc_media_filename ? `<a href="/api/admin/kyc/${u.id}" target="_blank">Voir</a>` : "—"}</td>
+      <td>${kycLinks(u)}</td>
       <td>${fmtDate(u.created_at)}</td>
     `;
     usersBody.appendChild(tr);

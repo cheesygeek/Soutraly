@@ -12,6 +12,6 @@ export const registerName: StateModule = {
     if (!name) {
       return { ok: false, error: "Merci d'indiquer votre nom complet." };
     }
-    return { ok: true, nextState: "REGISTER_KYC_PROOF", contextPatch: { name } };
+    return { ok: true, nextState: "REGISTER_KYC_ID", contextPatch: { name } };
   },
 };

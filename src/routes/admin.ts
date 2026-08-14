@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Response } from "express";
 import { resolve } from "node:path";
 import { listUsers, getUserById } from "../db/queries/users.js";
 import { listAllLoans, getLoanById } from "../db/queries/loans.js";
@@ -34,16 +34,31 @@ adminRouter.get("/overview", (_req, res) => {
   res.json({ users, loans, summary });
 });
 
+// Le nom de fichier vient toujours de la base (genere par mediaStorage a la
+// reception), jamais du client - pas de risque de traversee de repertoire.
+function sendUserMedia(res: Response, filename: string | null) {
+  if (!filename) {
+    res.status(404).send("Aucun document disponible.");
+    return;
+  }
+  res.sendFile(resolve(KYC_UPLOAD_DIR, filename));
+}
+
+// Ancien format (une seule piece justificative, avant la separation ID/contrat).
 adminRouter.get("/kyc/:userId", (req, res) => {
   const userId = parseInt(req.params.userId, 10);
   const user = Number.isInteger(userId) ? getUserById(userId) : undefined;
+  sendUserMedia(res, user?.kyc_media_filename ?? null);
+});
 
-  if (!user || !user.kyc_media_filename) {
-    res.status(404).send("Aucun justificatif pour cet utilisateur.");
-    return;
-  }
+adminRouter.get("/kyc/:userId/id", (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+  const user = Number.isInteger(userId) ? getUserById(userId) : undefined;
+  sendUserMedia(res, user?.kyc_id_media_filename ?? null);
+});
 
-  // Le nom de fichier vient toujours de la base (genere par mediaStorage a la
-  // reception), jamais du client - pas de risque de traversee de repertoire.
-  res.sendFile(resolve(KYC_UPLOAD_DIR, user.kyc_media_filename));
+adminRouter.get("/kyc/:userId/contract", (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+  const user = Number.isInteger(userId) ? getUserById(userId) : undefined;
+  sendUserMedia(res, user?.kyc_contract_media_filename ?? null);
 });

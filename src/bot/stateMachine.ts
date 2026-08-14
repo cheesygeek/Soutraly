@@ -5,7 +5,8 @@ import { logMessage, getHistory } from "../db/queries/messages.js";
 import { welcome } from "./states/welcome.js";
 import { roleSelect } from "./states/roleSelect.js";
 import { registerName } from "./states/registerName.js";
-import { registerKycProof } from "./states/registerKycProof.js";
+import { registerKycId } from "./states/registerKycId.js";
+import { registerKycContract } from "./states/registerKycContract.js";
 import { mainMenuBorrower } from "./states/mainMenuBorrower.js";
 import { requestLoanAmount } from "./states/requestLoanAmount.js";
 import { confirmLoanRequest } from "./states/confirmLoanRequest.js";
@@ -18,7 +19,8 @@ const states: Record<ConversationState, StateModule> = {
   WELCOME: welcome,
   ROLE_SELECT: roleSelect,
   REGISTER_NAME: registerName,
-  REGISTER_KYC_PROOF: registerKycProof,
+  REGISTER_KYC_ID: registerKycId,
+  REGISTER_KYC_CONTRACT: registerKycContract,
   MAIN_MENU_BORROWER: mainMenuBorrower,
   REQUEST_LOAN_AMOUNT: requestLoanAmount,
   CONFIRM_LOAN_REQUEST: confirmLoanRequest,

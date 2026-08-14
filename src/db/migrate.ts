@@ -12,6 +12,26 @@ const ADDED_COLUMNS: Array<{ table: string; column: string; ddl: string }> = [
     column: "kyc_media_content_type",
     ddl: "ALTER TABLE users ADD COLUMN kyc_media_content_type TEXT",
   },
+  {
+    table: "users",
+    column: "kyc_id_media_filename",
+    ddl: "ALTER TABLE users ADD COLUMN kyc_id_media_filename TEXT",
+  },
+  {
+    table: "users",
+    column: "kyc_id_media_content_type",
+    ddl: "ALTER TABLE users ADD COLUMN kyc_id_media_content_type TEXT",
+  },
+  {
+    table: "users",
+    column: "kyc_contract_media_filename",
+    ddl: "ALTER TABLE users ADD COLUMN kyc_contract_media_filename TEXT",
+  },
+  {
+    table: "users",
+    column: "kyc_contract_media_content_type",
+    ddl: "ALTER TABLE users ADD COLUMN kyc_contract_media_content_type TEXT",
+  },
 ];
 
 function columnExists(table: string, column: string): boolean {

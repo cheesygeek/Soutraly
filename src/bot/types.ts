@@ -2,7 +2,8 @@ export type ConversationState =
   | "WELCOME"
   | "ROLE_SELECT"
   | "REGISTER_NAME"
-  | "REGISTER_KYC_PROOF"
+  | "REGISTER_KYC_ID"
+  | "REGISTER_KYC_CONTRACT"
   | "MAIN_MENU_BORROWER"
   | "REQUEST_LOAN_AMOUNT"
   | "CONFIRM_LOAN_REQUEST"
@@ -17,6 +18,8 @@ export interface SessionContext {
   pendingAmount?: number;
   selectedLoanId?: number;
   browseLoanIds?: number[];
+  kycIdMediaFilename?: string;
+  kycIdMediaContentType?: string;
 }
 
 export interface BotReply {
