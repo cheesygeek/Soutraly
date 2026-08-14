@@ -3,7 +3,7 @@
 Depot : [github.com/cheesygeek/Soutraly](https://github.com/cheesygeek/Soutraly)
 
 Plateforme de micro-credit entre particuliers (Cote d'Ivoire, XOF) : les emprunteurs
-demandent un pret de 30 jours (50 000 a 500 000 XOF), les preteurs les financent, la
+demandent un pret de 30 jours (10 000 a 100 000 XOF), les preteurs les financent, la
 plateforme prend des frais et fait office de marketplace + broker.
 
 Le moteur de conversation (`dispatch()`) est partage par deux points d'entree :
@@ -24,10 +24,12 @@ npm run dev
 Le serveur demarre sur `http://localhost:3000` :
 
 - `/` — chat web (entrer un numero de telephone simule pour demarrer une conversation)
-- `/admin.html` — vue de suivi du pilote (utilisateurs, prets, frais collectes)
+- `/admin.html` — vue de suivi du pilote (utilisateurs, prets, frais collectes),
+  protegee par `ADMIN_USERNAME` / `ADMIN_PASSWORD` (a definir dans `.env`, sinon
+  impossible de s'y connecter meme en local)
 
 La base de donnees SQLite est creee automatiquement dans `data/soutraly.db` au
-premier lancement.
+premier lancement, les justificatifs KYC recus dans `data/kyc-uploads/`.
 
 ## Structure
 
@@ -48,9 +50,12 @@ public/        interface de chat (vanilla JS) + dashboard admin
 - **Frais** ([src/config/fees.ts](src/config/fees.ts)) : pourcentages placeholder,
   non issus du document produit (qui ne fixe aucun taux). A valider avant tout
   pilote avec de vrais montants.
-- **KYC** : auto-verifie a la reception d'un texte quelconque (pas de vraie
-  verification de piece/contrat) — suffisant pour tester le parcours, pas pour
-  un vrai pilote.
+- **KYC** : demande desormais une vraie photo ou un PDF (piece d'identite /
+  contrat de travail), stocke sur le disque (`data/kyc-uploads/`, jamais commite
+  — voir `.gitignore`) et consultable depuis l'admin. Formats acceptes :
+  JPEG/PNG/WebP/PDF, 10 Mo max (voir [src/whatsapp/mediaStorage.ts](src/whatsapp/mediaStorage.ts)).
+  Le statut reste auto-verifie a la reception du fichier : **aucune verification
+  humaine du contenu**, ce n'est qu'une collecte de document, pas un vrai controle KYC.
 - **WhatsApp reel** : branche via Twilio WhatsApp Sandbox (voir section dediee
   ci-dessous). Le sandbox est gratuit mais limite a des fins de pilote — chaque
   participant doit "join" manuellement et les sessions expirent apres 72h
@@ -84,8 +89,9 @@ HTTPS stable (Railway ici).
 2. Dans la Console : **Messaging → Try it out → Send a WhatsApp message** pour
    activer le Sandbox. Noter le numero du sandbox et le code de jonction
    (`join <mot-code>`).
-3. Sur la page d'accueil de la Console, copier l'**Auth Token** (sous le compte,
-   pas besoin de l'Account SID pour ce prototype — voir plus bas).
+3. Sur la page d'accueil de la Console, copier l'**Account SID** et l'**Auth
+   Token** (les deux sont necessaires : le premier pour telecharger les photos/PDF
+   envoyes par les utilisateurs, le second pour valider les messages entrants).
 
 ### 2. Deployer sur Railway
 
@@ -96,11 +102,16 @@ HTTPS stable (Railway ici).
 3. Variables d'environnement du service :
    - `DB_PATH=/data/soutraly.db`
    - `TWILIO_AUTH_TOKEN=<copie depuis la Console Twilio>`
+   - `TWILIO_ACCOUNT_SID=<copie depuis la Console Twilio>`
+   - `ADMIN_USERNAME=` / `ADMIN_PASSWORD=` (choisis toi-meme — protegent
+     `/admin.html`, qui donne desormais acces a de vrais documents d'identite)
    - `PORT` : deja injecte automatiquement par Railway, rien a faire.
    - `PUBLIC_BASE_URL` : optionnel — si absent, le serveur utilise automatiquement
      `RAILWAY_PUBLIC_DOMAIN` (expose par Railway). A definir explicitement si un
      domaine personnalise est utilise.
 4. Railway detecte automatiquement `npm run build` puis `npm start` (Nixpacks).
+   Les justificatifs KYC sont sauvegardes a cote du fichier SQLite, donc sur le
+   meme volume `/data` — aucune configuration supplementaire necessaire.
 
 ### 3. Configurer le webhook cote Twilio
 
@@ -129,6 +140,18 @@ valide est rejetee en 403, meme avec le bon format de donnees :
 curl -X POST https://<domaine>/webhook/whatsapp -d "From=whatsapp:+225...&Body=test"
 # → 403 Signature Twilio invalide.
 ```
+
+## Logo
+
+Le logo est dans [branding/soutraly-logo.png](branding/soutraly-logo.png) (1280×1280,
+source editable dans [branding/logo-source.html](branding/logo-source.html), regenerable
+via Chrome headless : `Google Chrome --headless=new --screenshot=out.png --window-size=640,640 --force-device-scale-factor=2 file://.../logo-source.html`).
+
+**Limite du Sandbox Twilio** : le numero de test (`+1 415 523 8886`) est partage
+entre tous les comptes Twilio — impossible d'y appliquer une photo de profil
+personnalisee. Le logo ne pourra etre affiche comme photo de profil WhatsApp
+qu'une fois passe a un expediteur de production (numero dedie, via Twilio ou
+directement le WhatsApp Business Manager de Meta).
 
 ## Scripts
 

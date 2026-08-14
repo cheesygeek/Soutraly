@@ -24,11 +24,16 @@ export interface BotReply {
   quickReplies?: string[];
 }
 
+export type MediaInput =
+  | { kind: "file"; filename: string; contentType: string }
+  | { kind: "rejected"; reason: string };
+
 export interface HandlerArgs {
   phone: string;
   input: string;
   context: SessionContext;
   userId: number | null;
+  media?: MediaInput;
 }
 
 export type HandleOutcome =

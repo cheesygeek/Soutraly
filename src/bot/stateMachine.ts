@@ -1,4 +1,4 @@
-import type { BotReply, ConversationState, SessionContext, StateModule } from "./types.js";
+import type { BotReply, ConversationState, MediaInput, SessionContext, StateModule } from "./types.js";
 import { getOrCreateSession, saveSession } from "../db/queries/sessions.js";
 import { logMessage, getHistory } from "../db/queries/messages.js";
 
@@ -36,22 +36,29 @@ function parseContext(json: string): SessionContext {
   }
 }
 
+function describeMedia(media: MediaInput): string {
+  if (media.kind === "rejected") return "[Fichier rejete]";
+  if (media.contentType === "application/pdf") return "[PDF]";
+  if (media.contentType.startsWith("image/")) return "[Photo]";
+  return "[Fichier]";
+}
+
 /**
  * Dispatches one inbound message through the FSM. Invalid input never advances
  * the state — it re-shows the current state's prompt so the bot can't get stuck
  * or crash on unexpected text.
  */
-export function dispatch(phone: string, input: string): BotReply {
+export function dispatch(phone: string, input: string, media?: MediaInput): BotReply {
   const session = getOrCreateSession(phone);
   const currentState = session.state as ConversationState;
   const context = parseContext(session.context_json);
   const module = states[currentState];
 
-  if (input !== "") {
-    logMessage(phone, "inbound", input);
+  if (input !== "" || media) {
+    logMessage(phone, "inbound", input !== "" ? input : describeMedia(media!));
   }
 
-  const outcome = module.handle({ phone, input, context, userId: session.user_id });
+  const outcome = module.handle({ phone, input, context, userId: session.user_id, media });
 
   let reply: BotReply;
   let nextState: ConversationState;

@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
   role TEXT CHECK(role IN ('borrower','lender')),
   kyc_status TEXT NOT NULL DEFAULT 'pending' CHECK(kyc_status IN ('pending','submitted','verified','rejected')),
   kyc_proof_stub TEXT,
+  kyc_media_filename TEXT,
+  kyc_media_content_type TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

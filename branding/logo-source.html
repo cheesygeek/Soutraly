@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 640px;
+    height: 640px;
+    background: #0B4F3F;
+  }
+  .canvas {
+    width: 640px;
+    height: 640px;
+    background: radial-gradient(circle at 50% 42%, #12664F 0%, #0B4F3F 62%, #093F32 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  }
+  svg { display: block; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <svg width="420" height="420" viewBox="0 0 420 420">
+      <!-- outer coin ring -->
+      <circle cx="210" cy="210" r="188" fill="none" stroke="#E8C15C" stroke-width="10" opacity="0.9"/>
+      <!-- two arcs forming a lending/exchange loop -->
+      <path d="M 90 150 A 130 130 0 0 1 300 150" fill="none" stroke="#F4D98A" stroke-width="16" stroke-linecap="round"/>
+      <path d="M 60 145 L 92 118 L 108 154 Z" fill="#F4D98A"/>
+      <path d="M 330 270 A 130 130 0 0 1 120 270" fill="none" stroke="#F4D98A" stroke-width="16" stroke-linecap="round"/>
+      <path d="M 360 275 L 328 302 L 312 266 Z" fill="#F4D98A"/>
+      <!-- central monogram S -->
+      <text x="210" y="252" text-anchor="middle" font-size="176" font-weight="700" fill="#FBEFD1" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif">S</text>
+    </svg>
+  </div>
+</body>
+</html>

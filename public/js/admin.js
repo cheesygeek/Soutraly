@@ -40,6 +40,7 @@ async function loadOverview() {
       <td>${u.phone_number}</td>
       <td>${u.role ?? "—"}</td>
       <td>${u.kyc_status}</td>
+      <td>${u.kyc_media_filename ? `<a href="/api/admin/kyc/${u.id}" target="_blank">Voir</a>` : "—"}</td>
       <td>${fmtDate(u.created_at)}</td>
     `;
     usersBody.appendChild(tr);

@@ -7,15 +7,17 @@ export const registerKycProof: StateModule = {
     return {
       lines: [
         isBorrower
-          ? "Pour verifier votre identite, merci d'envoyer une copie (texte) de votre contrat de travail."
-          : "Pour verifier votre identite, merci d'envoyer une piece d'identite (texte).",
+          ? "Pour verifier votre identite, merci d'envoyer une photo ou un PDF de votre contrat de travail."
+          : "Pour verifier votre identite, merci d'envoyer une photo ou un PDF d'une piece d'identite.",
       ],
     };
   },
-  handle({ input, context, phone }) {
-    const proof = input.trim();
-    if (!proof) {
-      return { ok: false, error: "Merci d'envoyer un justificatif (texte)." };
+  handle({ media, context, phone }) {
+    if (!media) {
+      return { ok: false, error: "Merci d'envoyer une photo ou un PDF (pas de texte)." };
+    }
+    if (media.kind === "rejected") {
+      return { ok: false, error: media.reason };
     }
     if (!context.role || !context.name) {
       // Should not happen given the FSM order, but guards against a corrupted session.
@@ -25,7 +27,8 @@ export const registerKycProof: StateModule = {
       phone,
       name: context.name,
       role: context.role,
-      kycProofStub: proof,
+      kycMediaFilename: media.filename,
+      kycMediaContentType: media.contentType,
     });
     const nextState = context.role === "borrower" ? "MAIN_MENU_BORROWER" : "MAIN_MENU_LENDER";
     return {

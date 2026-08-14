@@ -10,6 +10,8 @@ const messagesEl = document.getElementById("messages");
 const quickRepliesEl = document.getElementById("quick-replies");
 const messageInput = document.getElementById("message-input");
 const sendButton = document.getElementById("send-button");
+const attachButton = document.getElementById("attach-button");
+const fileInput = document.getElementById("file-input");
 
 let currentPhone = null;
 
@@ -86,6 +88,34 @@ async function sendMessage(text) {
   messagesEl.scrollTop = messagesEl.scrollHeight;
   renderQuickReplies(data.reply.quickReplies);
 }
+
+async function sendFile(file) {
+  if (!file || !currentPhone) return;
+
+  messagesEl.appendChild(bubbleFor("inbound", `📎 ${file.name}`));
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  renderQuickReplies(undefined);
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/chat/${encodeURIComponent(currentPhone)}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
+
+  messagesEl.appendChild(bubbleFor("outbound", data.reply.lines.join("\n")));
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  renderQuickReplies(data.reply.quickReplies);
+}
+
+attachButton.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  fileInput.value = "";
+  sendFile(file);
+});
 
 phoneSubmit.addEventListener("click", () => {
   const phone = phoneInput.value.trim();

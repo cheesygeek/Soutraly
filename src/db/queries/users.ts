@@ -10,6 +10,8 @@ export interface User {
   role: Role | null;
   kyc_status: KycStatus;
   kyc_proof_stub: string | null;
+  kyc_media_filename: string | null;
+  kyc_media_content_type: string | null;
   created_at: string;
 }
 
@@ -25,14 +27,15 @@ export function createUser(params: {
   phone: string;
   name: string;
   role: Role;
-  kycProofStub: string;
+  kycMediaFilename: string;
+  kycMediaContentType: string;
 }): User {
   const info = db
     .prepare(
-      `INSERT INTO users (phone_number, name, role, kyc_status, kyc_proof_stub)
-       VALUES (?, ?, ?, 'verified', ?)`
+      `INSERT INTO users (phone_number, name, role, kyc_status, kyc_media_filename, kyc_media_content_type)
+       VALUES (?, ?, ?, 'verified', ?, ?)`
     )
-    .run(params.phone, params.name, params.role, params.kycProofStub);
+    .run(params.phone, params.name, params.role, params.kycMediaFilename, params.kycMediaContentType);
   return getUserById(info.lastInsertRowid as number)!;
 }
 

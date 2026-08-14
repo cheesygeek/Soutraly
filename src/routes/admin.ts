@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { listUsers } from "../db/queries/users.js";
+import { resolve } from "node:path";
+import { listUsers, getUserById } from "../db/queries/users.js";
 import { listAllLoans, getLoanById } from "../db/queries/loans.js";
 import { getFundingByLoanId } from "../db/queries/fundings.js";
 import { sumFeesCollected } from "../db/queries/ledger.js";
+import { KYC_UPLOAD_DIR } from "../whatsapp/mediaStorage.js";
 
 export const adminRouter = Router();
 
@@ -30,4 +32,18 @@ adminRouter.get("/overview", (_req, res) => {
   };
 
   res.json({ users, loans, summary });
+});
+
+adminRouter.get("/kyc/:userId", (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+  const user = Number.isInteger(userId) ? getUserById(userId) : undefined;
+
+  if (!user || !user.kyc_media_filename) {
+    res.status(404).send("Aucun justificatif pour cet utilisateur.");
+    return;
+  }
+
+  // Le nom de fichier vient toujours de la base (genere par mediaStorage a la
+  // reception), jamais du client - pas de risque de traversee de repertoire.
+  res.sendFile(resolve(KYC_UPLOAD_DIR, user.kyc_media_filename));
 });
