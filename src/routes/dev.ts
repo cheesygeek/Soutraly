@@ -4,12 +4,18 @@
 
 import { Router } from "express";
 import { runLateLoanCheck } from "../services/lateLoanService.js";
+import { runLoanReminderCheck } from "../services/loanReminderService.js";
 import { backdateLoanDueDate, getLoanById } from "../db/queries/loans.js";
 
 export const devRouter = Router();
 
 devRouter.post("/run-late-check", (_req, res) => {
   const result = runLateLoanCheck();
+  res.json(result);
+});
+
+devRouter.post("/run-reminder-check", async (_req, res) => {
+  const result = await runLoanReminderCheck();
   res.json(result);
 });
 

@@ -12,22 +12,25 @@ export interface Loan {
   funded_at: string | null;
   due_at: string | null;
   repaid_at: string | null;
+  /** @deprecated remplace par interest_amount (nouveau modele d'interet du cahier des charges) */
   origination_fee: number | null;
+  interest_amount: number | null;
   late_fee_applied: number | null;
+  reminder_sent_at: string | null;
 }
 
 export function createLoan(params: {
   borrowerId: number;
   amount: number;
   tenorDays: number;
-  originationFee: number;
+  interestAmount: number;
 }): Loan {
   const info = db
     .prepare(
-      `INSERT INTO loans (borrower_id, amount, tenor_days, origination_fee)
+      `INSERT INTO loans (borrower_id, amount, tenor_days, interest_amount)
        VALUES (?, ?, ?, ?)`
     )
-    .run(params.borrowerId, params.amount, params.tenorDays, params.originationFee);
+    .run(params.borrowerId, params.amount, params.tenorDays, params.interestAmount);
   return getLoanById(info.lastInsertRowid as number)!;
 }
 
@@ -55,6 +58,22 @@ export function listActiveLoansPastDue(): Loan[] {
   return db
     .prepare("SELECT * FROM loans WHERE status = 'active' AND due_at < datetime('now')")
     .all() as Loan[];
+}
+
+export function listActiveLoansDueSoon(daysBefore: number): Loan[] {
+  return db
+    .prepare(
+      `SELECT * FROM loans
+       WHERE status = 'active'
+         AND reminder_sent_at IS NULL
+         AND due_at IS NOT NULL
+         AND due_at BETWEEN datetime('now') AND datetime('now', '+' || ? || ' days')`
+    )
+    .all(daysBefore) as Loan[];
+}
+
+export function markReminderSent(loanId: number): void {
+  db.prepare(`UPDATE loans SET reminder_sent_at = datetime('now') WHERE id = ?`).run(loanId);
 }
 
 export function activateLoan(loanId: number, dueAt: string): void {

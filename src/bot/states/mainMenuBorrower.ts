@@ -1,5 +1,6 @@
 import type { StateModule } from "../types.js";
-import { getBorrowerLoans, findRepayableLoan } from "../../services/loanService.js";
+import { getBorrowerLoans, findRepayableLoan, isBorrowingWindowOpen } from "../../services/loanService.js";
+import { BORROWING_WINDOW_OPEN_DAY, BORROWING_WINDOW_CLOSE_DAY } from "../../config/loanRules.js";
 import { formatLoanLine } from "../formatters.js";
 
 export const mainMenuBorrower: StateModule = {
@@ -19,6 +20,15 @@ export const mainMenuBorrower: StateModule = {
     const choice = input.trim();
 
     if (choice === "1") {
+      if (!isBorrowingWindowOpen()) {
+        return {
+          ok: true,
+          nextState: "MAIN_MENU_BORROWER",
+          extraLines: [
+            `Les demandes de pret ne sont ouvertes que du ${BORROWING_WINDOW_OPEN_DAY} a la fin du mois, jusqu'au ${BORROWING_WINDOW_CLOSE_DAY} du mois suivant. Revenez pendant cette fenetre.`,
+          ],
+        };
+      }
       return { ok: true, nextState: "REQUEST_LOAN_AMOUNT" };
     }
 

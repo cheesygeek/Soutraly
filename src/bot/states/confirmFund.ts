@@ -1,7 +1,7 @@
 import type { StateModule } from "../types.js";
 import { getLoanById } from "../../db/queries/loans.js";
 import { fundLoan, LoanNotFundableError } from "../../services/fundingService.js";
-import { computeServiceFee } from "../../services/ledgerService.js";
+import { splitInterest } from "../../config/interestModel.js";
 import { formatXOF } from "../formatters.js";
 
 export const confirmFund: StateModule = {
@@ -10,11 +10,11 @@ export const confirmFund: StateModule = {
     if (!loan) {
       return { lines: ["Ce pret n'est plus disponible."] };
     }
-    const fee = computeServiceFee(loan.amount);
+    const { lenderShare } = splitInterest(loan.interest_amount ?? 0);
     return {
       lines: [
         `Vous allez financer un pret de ${formatXOF(loan.amount)} (echeance 30 jours).`,
-        `Frais de service estimes : ${formatXOF(fee)} (a votre charge).`,
+        `Rendement estime a l'echeance : ${formatXOF(lenderShare)} (50 % de l'interet).`,
         "",
         "1. Confirmer le financement",
         "2. Annuler",

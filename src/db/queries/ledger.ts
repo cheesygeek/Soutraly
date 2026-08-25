@@ -6,7 +6,9 @@ export type LedgerEntryType =
   | "late_fee"
   | "principal_repayment"
   | "interest_spread"
-  | "lender_payout";
+  | "lender_payout"
+  | "platform_revenue"
+  | "reserve_fund";
 
 export type LedgerParty = "platform" | "borrower" | "lender";
 
@@ -47,6 +49,20 @@ export function sumFeesCollected(): number {
       `SELECT COALESCE(SUM(amount), 0) as total FROM ledger_entries
        WHERE entry_type IN ('origination_fee','service_fee','late_fee')`
     )
+    .get() as { total: number };
+  return row.total;
+}
+
+export function sumPlatformRevenue(): number {
+  const row = db
+    .prepare(`SELECT COALESCE(SUM(amount), 0) as total FROM ledger_entries WHERE entry_type = 'platform_revenue'`)
+    .get() as { total: number };
+  return row.total;
+}
+
+export function sumReserveFund(): number {
+  const row = db
+    .prepare(`SELECT COALESCE(SUM(amount), 0) as total FROM ledger_entries WHERE entry_type = 'reserve_fund'`)
     .get() as { total: number };
   return row.total;
 }

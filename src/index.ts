@@ -8,6 +8,7 @@ import { devRouter } from "./routes/dev.js";
 import { whatsappRouter } from "./routes/whatsappWebhook.js";
 import { adminAuth } from "./middleware/adminAuth.js";
 import { startLateLoanCheckJob } from "./jobs/lateLoanCheck.js";
+import { startLoanReminderJob } from "./jobs/loanReminderJob.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -29,6 +30,7 @@ app.use("/api/dev", devRouter);
 app.use("/webhook/whatsapp", whatsappRouter);
 
 startLateLoanCheckJob();
+startLoanReminderJob();
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 app.listen(port, () => {

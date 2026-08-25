@@ -33,7 +33,9 @@ CREATE TABLE IF NOT EXISTS loans (
   due_at TEXT,
   repaid_at TEXT,
   origination_fee INTEGER,
-  late_fee_applied INTEGER
+  interest_amount INTEGER,
+  late_fee_applied INTEGER,
+  reminder_sent_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS fundings (
@@ -48,11 +50,20 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   loan_id INTEGER NOT NULL REFERENCES loans(id),
   entry_type TEXT NOT NULL CHECK(entry_type IN
-    ('origination_fee','service_fee','late_fee','principal_repayment','interest_spread','lender_payout')),
+    ('origination_fee','service_fee','late_fee','principal_repayment','interest_spread','lender_payout',
+     'platform_revenue','reserve_fund')),
   amount INTEGER NOT NULL,
   party TEXT NOT NULL CHECK(party IN ('platform','borrower','lender')),
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   note TEXT
+);
+
+CREATE TABLE IF NOT EXISTS auth_tokens (
+  token TEXT PRIMARY KEY,
+  phone_number TEXT NOT NULL,
+  user_id INTEGER REFERENCES users(id),
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS chat_messages (

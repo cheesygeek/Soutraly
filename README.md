@@ -77,6 +77,32 @@ curl -X POST http://localhost:3000/api/dev/loans/<ID>/backdate -H "Content-Type:
 curl -X POST http://localhost:3000/api/dev/run-late-check
 ```
 
+## Rappel automatique avant echeance
+
+Un job ([src/jobs/loanReminderJob.ts](src/jobs/loanReminderJob.ts), verifie toutes
+les heures) envoie un message WhatsApp proactif aux emprunteurs dont le pret
+arrive a echeance dans les `REMINDER_DAYS_BEFORE_DUE` jours
+([src/config/loanRules.ts](src/config/loanRules.ts), 2 jours par defaut). Chaque
+pret n'est rappele qu'une fois (`reminder_sent_at`) ; un envoi qui echoue n'est
+pas marque comme fait et sera retente au prochain cycle.
+
+**A savoir** : WhatsApp n'autorise l'envoi de texte libre que dans les 24h
+suivant le dernier message de l'utilisateur — passe ce delai, Meta peut
+rejeter l'envoi tant qu'aucun message-modele pre-approuve n'est utilise. Comme
+un rappel arrive typiquement plusieurs jours apres la derniere interaction, il
+est probable qu'il faille a terme soumettre un modele de message a Meta pour
+que les rappels passent de maniere fiable — a valider en conditions reelles.
+
+Pour tester sans attendre :
+
+```bash
+# Antidater l'echeance d'un pret pour la rapprocher (valeur negative = dans le futur)
+curl -X POST http://localhost:3000/api/dev/loans/<ID>/backdate -H "Content-Type: application/json" -d '{"daysAgo":-1}'
+
+# Declencher le controle de rappel immediatement
+curl -X POST http://localhost:3000/api/dev/run-reminder-check
+```
+
 ## Brancher WhatsApp (Twilio Sandbox) + deploiement Railway
 
 Le webhook (`POST /webhook/whatsapp`, voir [src/routes/whatsappWebhook.ts](src/routes/whatsappWebhook.ts))
@@ -105,6 +131,8 @@ HTTPS stable (Railway ici).
    - `DB_PATH=/data/soutraly.db`
    - `TWILIO_AUTH_TOKEN=<copie depuis la Console Twilio>`
    - `TWILIO_ACCOUNT_SID=<copie depuis la Console Twilio>`
+   - `TWILIO_WHATSAPP_FROM=<numero expediteur, ex: +14155238886 pour le sandbox>`
+     (necessaire pour les rappels de pret sortants — voir plus bas)
    - `ADMIN_USERNAME=` / `ADMIN_PASSWORD=` (choisis toi-meme — protegent
      `/admin.html`, qui donne desormais acces a de vrais documents d'identite)
    - `PORT` : deja injecte automatiquement par Railway, rien a faire.
