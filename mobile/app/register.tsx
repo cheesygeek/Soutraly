@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator, ScrollView, Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import { File } from "expo-file-system";
 import { apiUpload } from "../src/api/client";
 import type { User } from "../src/api/types";
 import { colors, spacing } from "../src/theme";
@@ -64,16 +65,8 @@ export default function Register() {
     try {
       const formData = new FormData();
       formData.append("name", name.trim());
-      formData.append("idDocument", {
-        uri: idDoc.uri,
-        name: "piece-identite.jpg",
-        type: idDoc.mimeType ?? "image/jpeg",
-      } as unknown as Blob);
-      formData.append("contractDocument", {
-        uri: contractDoc.uri,
-        name: "contrat-travail.jpg",
-        type: contractDoc.mimeType ?? "image/jpeg",
-      } as unknown as Blob);
+      formData.append("idDocument", new File(idDoc.uri));
+      formData.append("contractDocument", new File(contractDoc.uri));
 
       await apiUpload<{ user: User }>("/api/mobile/register", formData);
       router.replace("/home");

@@ -1,5 +1,9 @@
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
+// fetch de expo/fetch reconnait les instances File d'expo-file-system dans
+// un FormData - le fetch global de React Native ne les gere pas (erreur
+// "Unsupported FormDataPart implementation").
+import { fetch as expoFetch } from "expo/fetch";
 
 const TOKEN_KEY = "soutraly_token";
 
@@ -27,7 +31,7 @@ export class ApiError extends Error {
   }
 }
 
-async function parseErrorBody(res: Response): Promise<string> {
+async function parseErrorBody(res: { json: () => Promise<any>; status: number }): Promise<string> {
   try {
     const body = await res.json();
     return body?.error ?? `Erreur ${res.status}`;
@@ -61,10 +65,10 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const res = await expoFetch(`${API_BASE_URL}${path}`, {
     method: "POST",
-    headers: await withAuthHeaders(),
-    body: formData,
+    headers: (await withAuthHeaders()) as Record<string, string>,
+    body: formData as unknown as BodyInit,
   });
   if (!res.ok) throw new ApiError(res.status, await parseErrorBody(res));
   return res.json() as Promise<T>;
