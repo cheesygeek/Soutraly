@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { listUsers, getUserById } from "../db/queries/users.js";
 import { listAllLoans, getLoanById } from "../db/queries/loans.js";
 import { getFundingByLoanId } from "../db/queries/fundings.js";
-import { sumFeesCollected } from "../db/queries/ledger.js";
+import { sumFeesCollected, sumPlatformRevenue, sumReserveFund } from "../db/queries/ledger.js";
 import { KYC_UPLOAD_DIR } from "../whatsapp/mediaStorage.js";
 
 export const adminRouter = Router();
@@ -29,6 +29,8 @@ adminRouter.get("/overview", (_req, res) => {
     active_loans: loans.filter((l) => l.status === "active").length,
     late_loans: loans.filter((l) => l.status === "late").length,
     total_fees_collected: sumFeesCollected(),
+    total_platform_revenue: sumPlatformRevenue(),
+    total_reserve_fund: sumReserveFund(),
   };
 
   res.json({ users, loans, summary });

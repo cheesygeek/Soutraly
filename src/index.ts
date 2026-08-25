@@ -6,6 +6,8 @@ import { chatRouter } from "./routes/chat.js";
 import { adminRouter } from "./routes/admin.js";
 import { devRouter } from "./routes/dev.js";
 import { whatsappRouter } from "./routes/whatsappWebhook.js";
+import { mobileAuthRouter } from "./routes/mobileAuth.js";
+import { mobileApiRouter } from "./routes/mobileApi.js";
 import { adminAuth } from "./middleware/adminAuth.js";
 import { startLateLoanCheckJob } from "./jobs/lateLoanCheck.js";
 import { startLoanReminderJob } from "./jobs/loanReminderJob.js";
@@ -28,6 +30,8 @@ app.use("/api/chat", chatRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/dev", devRouter);
 app.use("/webhook/whatsapp", whatsappRouter);
+app.use("/api/mobile/auth", mobileAuthRouter);
+app.use("/api/mobile", mobileApiRouter);
 
 startLateLoanCheckJob();
 startLoanReminderJob();

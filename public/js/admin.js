@@ -33,6 +33,8 @@ async function loadOverview() {
     ["Prets actifs", data.summary.active_loans],
     ["Prets en retard", data.summary.late_loans],
     ["Frais collectes", fmtXOF(data.summary.total_fees_collected)],
+    ["Marge plateforme", fmtXOF(data.summary.total_platform_revenue)],
+    ["Fonds de reserve", fmtXOF(data.summary.total_reserve_fund)],
   ];
   for (const [label, value] of cards) {
     const card = document.createElement("div");
