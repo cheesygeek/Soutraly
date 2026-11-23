@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>
+:root{--g0:#093F32;--g1:#0B4F3F;--g2:#12664F;--gold:#E8C15C;--gold2:#F4D98A;--cream:#FBEFD1;
+  --wa-green:#075e54;--wa-green-light:#dcf8c6;--wa-bg:#e5ddd5;--wa-panel:#f0f0f0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--g0)}
+body{font-family:Inter,'Noto Color Emoji',sans-serif;-webkit-font-smoothing:antialiased;color:var(--cream)}
+.abs{position:absolute}
+.scene{position:absolute;inset:0;overflow:hidden}
+.bg{position:absolute;inset:0;background:radial-gradient(ellipse 120% 80% at 50% 35%,#12664F 0%,#0B4F3F 45%,#093F32 100%)}
+.glow{position:absolute;border-radius:50%;filter:blur(80px)}
+
+/* S1 */
+#hook{left:60px;right:60px;top:300px;text-align:center;font-weight:800;font-size:118px;line-height:1.04;letter-spacing:-3px}
+#hook .gold{color:var(--gold2)}
+#cal{left:290px;top:760px;width:500px;height:560px;border-radius:48px;background:var(--cream);box-shadow:0 40px 90px rgba(0,0,0,.35);overflow:hidden}
+#calHead{height:130px;background:var(--gold);color:var(--g0);font-weight:800;font-size:46px;letter-spacing:8px;display:flex;align-items:center;justify-content:center}
+#calRings{position:absolute;top:-18px;left:0;right:0;display:flex;justify-content:center;gap:220px}
+#calRings i{display:block;width:30px;height:60px;border-radius:15px;background:var(--g1)}
+#calBody{position:absolute;top:130px;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center}
+.dnum{position:absolute;font-weight:800;font-size:300px;color:var(--g1);letter-spacing:-10px}
+#ring{position:absolute;width:390px;height:390px;border-radius:50%;border:14px solid var(--gold)}
+#calSub{left:0;right:0;top:1380px;text-align:center;font-size:44px;font-weight:600;color:var(--gold2)}
+
+/* S2 */
+#logo{left:340px;top:560px;width:400px;height:400px;border-radius:50%;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+#logo img{width:100%;height:100%;transform:scale(1.62)}
+#word{left:0;right:0;top:1010px;text-align:center;font-weight:800;font-size:150px;letter-spacing:-4px;color:var(--cream)}
+#tag{left:80px;right:80px;top:1220px;text-align:center;font-weight:700;font-size:64px;line-height:1.15;letter-spacing:-1px}
+#tag .gold{color:var(--gold2)}
+
+/* Téléphone */
+#caption{left:40px;right:40px;top:130px;height:220px}
+.cap{position:absolute;left:0;right:0;top:0;text-align:center}
+.role{display:inline-block;background:var(--gold);color:var(--g0);font-weight:800;font-size:34px;letter-spacing:4px;text-transform:uppercase;padding:10px 26px;border-radius:999px}
+.capt{font-weight:800;font-size:76px;letter-spacing:-2px;margin-top:22px;color:var(--cream)}
+#phone{left:170px;top:400px;width:740px;height:1480px;border-radius:96px;background:#0d0f10;padding:22px;box-shadow:0 40px 90px rgba(0,0,0,.45)}
+#screen{position:relative;width:100%;height:100%;border-radius:76px;background:var(--wa-bg);overflow:hidden}
+.island{position:absolute;left:50%;top:22px;width:200px;height:56px;margin-left:-100px;border-radius:30px;background:#0d0f10;z-index:6}
+#head{position:absolute;left:0;right:0;top:0;height:210px;background:var(--wa-green);color:#fff;z-index:4}
+.status{position:absolute;left:0;right:0;top:0;height:90px;display:flex;justify-content:space-between;align-items:center;padding:12px 64px 0;font-weight:700;font-size:30px}
+.hrow{position:absolute;left:30px;right:30px;top:100px;display:flex;align-items:center;gap:22px}
+.hav{width:84px;height:84px;border-radius:50%;overflow:hidden;flex:none}
+.hav img{width:100%;height:100%;transform:scale(1.62)}
+.hname{font-weight:700;font-size:36px}
+.hstat{font-size:24px;opacity:.85;margin-top:2px}
+.chat{position:absolute;left:0;right:0;top:210px;bottom:220px;overflow:hidden}
+.col{position:absolute;left:0;right:0;bottom:0;padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.bubble{max-width:84%;padding:16px 22px;border-radius:18px;font-size:30px;line-height:1.38;white-space:pre-wrap;color:#111b21;box-shadow:0 2px 2px rgba(0,0,0,.08)}
+.bubble.in{align-self:flex-start;background:#fff;border-top-left-radius:0}
+.bubble.out{align-self:flex-end;background:var(--wa-green-light);border-top-right-radius:0}
+.bubble .hl{border-radius:6px;padding:0 4px;margin:0 -4px}
+.bubble.win{box-shadow:0 0 0 5px var(--gold),0 10px 30px rgba(232,193,92,.45)}
+#qr{position:absolute;left:0;right:0;bottom:110px;height:110px;background:var(--wa-panel);display:flex;gap:16px;align-items:center;padding:0 24px;z-index:3}
+.qbtn{border:3px solid var(--wa-green);color:var(--wa-green);background:#fff;border-radius:999px;padding:12px 34px;font-size:30px;font-weight:600}
+.qbtn.on{background:var(--wa-green-light)}
+#comp{position:absolute;left:0;right:0;bottom:0;height:110px;background:var(--wa-panel);display:flex;gap:16px;align-items:center;padding:0 24px 14px;z-index:3}
+#inp{flex:1;height:76px;border-radius:999px;background:#fff;border:2px solid #ddd;display:flex;align-items:center;padding:0 30px;font-size:30px;color:#111b21}
+#inp .ph{color:#999}
+.caret{display:inline-block;width:3px;height:36px;background:var(--wa-green);margin-left:2px}
+#send{width:76px;height:76px;border-radius:50%;background:var(--wa-green);display:flex;align-items:center;justify-content:center}
+.finger{position:absolute;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;background:rgba(17,27,33,.22);border:4px solid rgba(255,255,255,.9);z-index:9;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.ripple{position:absolute;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;border:5px solid var(--wa-green);z-index:9}
+
+/* S5 */
+#oLogo{left:390px;top:520px;width:300px;height:300px;border-radius:50%;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+#oLogo img{width:100%;height:100%;transform:scale(1.62)}
+#oWord{left:0;right:0;top:860px;text-align:center;font-weight:800;font-size:130px;letter-spacing:-4px}
+#oLine{left:40px;right:40px;top:1060px;text-align:center;font-weight:800;font-size:76px;letter-spacing:-2px;line-height:1.15}
+#oLine .gold{color:var(--gold2)}
+#oChip{left:0;right:0;top:1330px;text-align:center}
+#oChip span{display:inline-block;border:3px solid var(--gold);color:var(--gold2);font-weight:700;font-size:40px;padding:16px 40px;border-radius:999px}
+</style>
+</head>
+<body>
+
+<div class="scene" id="s1">
+  <div class="bg"></div>
+  <div class="glow" style="width:700px;height:700px;left:190px;top:700px;background:rgba(232,193,92,.18)"></div>
+  <div class="abs" id="hook">Fin du mois<br><span class="gold">difficile ?</span></div>
+  <div class="abs" id="cal">
+    <div id="calHead">NOVEMBRE</div>
+    <div id="calBody"><div id="ring"></div></div>
+  </div>
+  <div class="abs" id="calRings" style="left:290px;width:500px;top:742px"><i></i><i></i></div>
+</div>
+
+<div class="scene" id="s2">
+  <div class="bg"></div>
+  <div class="glow" style="width:800px;height:800px;left:140px;top:400px;background:rgba(232,193,92,.15)"></div>
+  <div class="abs" id="logo"><img src="assets/soutraly-logo.png" alt=""></div>
+  <div class="abs" id="word">Soutraly</div>
+  <div class="abs" id="tag">Prêts de 30 jours entre particuliers,<br><span class="gold">sur WhatsApp.</span></div>
+</div>
+
+<div class="scene" id="s3">
+  <div class="bg"></div>
+  <div class="glow" style="width:800px;height:800px;left:-200px;top:1000px;background:rgba(232,193,92,.12)"></div>
+  <div class="abs" id="caption">
+    <div class="cap" id="cap1"><span class="role">Emprunteur</span><div class="capt">Demandez votre prêt</div></div>
+    <div class="cap" id="cap2"><span class="role">Prêteur</span><div class="capt">Financez-le</div></div>
+  </div>
+  <div class="abs" id="phone"><div id="screen">
+    <div class="island"></div>
+    <div id="head">
+      <div class="status"><span>9:41</span><span style="letter-spacing:4px">▮▮▮ ◉</span></div>
+      <div class="hrow"><span style="font-size:40px">‹</span><div class="hav"><img src="assets/soutraly-logo.png" alt=""></div>
+        <div><div class="hname">Soutraly</div><div class="hstat">en ligne</div></div></div>
+    </div>
+    <div class="chat" id="chatA"><div class="col" id="colA"></div></div>
+    <div class="chat" id="chatB"><div class="col" id="colB"></div></div>
+    <div id="qr"></div>
+    <div id="comp"><div id="inp"></div>
+      <div id="send"><svg viewBox="0 0 24 24" width="38" height="38"><path d="M3 20.5 21 12 3 3.5l.01 6.6L15 12 3.01 13.9z" fill="#fff"/></svg></div></div>
+    <div class="ripple" id="rip"></div>
+    <div class="finger" id="finger"></div>
+  </div></div>
+</div>
+
+<div class="scene" id="s5">
+  <div class="bg"></div>
+  <div class="glow" style="width:800px;height:800px;left:140px;top:350px;background:rgba(232,193,92,.16)"></div>
+  <div class="abs" id="oLogo"><img src="assets/soutraly-logo.png" alt=""></div>
+  <div class="abs" id="oWord">Soutraly</div>
+  <div class="abs" id="oLine">Emprunter. Prêter.<br><span class="gold">Sur WhatsApp.</span></div>
+  <div class="abs" id="oChip"><span>Pilote en cours · Côte d'Ivoire</span></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,b)=>cl((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3);
+const eb=x=>{const c1=1.6,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+function S(el,o){const e=typeof el==='string'?$(el):el;
+  if(o.o!==undefined)e.style.opacity=o.o;
+  e.style.transform=`translate(${o.x||0}px,${o.y||0}px) scale(${o.s===undefined?1:o.s})`;
+  e.style.visibility=(o.o===0)?'hidden':'visible';}
+function vis(id,on){$(id).style.display=on?'block':'none'}
+function popIn(t,a,d=.35,dy=40){const k=eo(P(t,a,a+d));return {o:k,y:(1-k)*dy}}
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+// Messages réels du bot (capturés en local, base de test)
+const A=[
+  {t:-1,d:'in',x:"Menu emprunteur — que souhaitez-vous faire ?\n1. Demander un pret\n2. Voir le statut de mes prets\n3. Rembourser mon pret\n0. Quitter"},
+  {t:-1,d:'out',x:'1'},
+  {t:-1,d:'in',x:"Quel montant souhaitez-vous emprunter ? (entre 10 000 XOF et 100 000 XOF, remboursable en 30 jours)"},
+  {t:7.5,d:'out',x:'50000'},
+  {t:8.0,d:'in',x:"Vous demandez un pret de 50 000 XOF sur 30 jours.\nInteret estime (1,9 %) : [[950 XOF]].\nTotal a rembourser a l'echeance : [[50 950 XOF]].\n\n1. Confirmer\n2. Annuler"},
+  {t:9.5,d:'out',x:'1'},
+  {t:10.0,d:'in',x:"Votre demande de pret #1 de 50 000 XOF a ete enregistree (statut : en attente de financement)."},
+];
+const B=[
+  {t:-1,d:'in',x:"Menu preteur — que souhaitez-vous faire ?\n1. Parcourir les demandes de pret\n2. Voir mes prets finances\n0. Quitter"},
+  {t:-1,d:'out',x:'1'},
+  {t:-1,d:'in',x:"Demandes de pret ouvertes :\n1. [[50 000 XOF sur 30 jours]]\n\n0. Retour"},
+  {t:12.0,d:'out',x:'1'},
+  {t:12.5,d:'in',x:"Vous allez financer un pret de 50 000 XOF (echeance 30 jours).\nRendement estime a l'echeance : [[475 XOF]] (50 % de l'interet).\n\n1. Confirmer le financement\n2. Annuler"},
+  {t:14.0,d:'out',x:'1'},
+  {t:14.5,d:'in',x:"Pret #1 finance avec succes ! Vous recevrez le remboursement a l'echeance.",win:true},
+];
+function build(col,list){list.forEach(m=>{const b=document.createElement('div');b.className='bubble '+m.d;
+  b.innerHTML=esc(m.x).replace(/\[\[(.+?)\]\]/g,'<span class="hl">$1</span>');col.appendChild(b);m.el=b;});}
+build($('colA'),A); build($('colB'),B);
+// réponses rapides : [début, fin, boutons]
+const QR=[[8.0,9.6,['1','2']],[10.85,12.1,['1','0']],[12.5,14.1,['1','2']]];
+const TYPE={a:6.75,txt:'50000'};
+let TAPS=[
+  {t:7.5, x:634,y:1374,from:{x:520,y:1050,t:7.0}},  // envoyer 50000
+  {t:9.5, x:67, y:1271,from:{x:420,y:1000,t:9.0}},  // 1. Confirmer
+  {t:12.0,x:67, y:1271,from:{x:420,y:1000,t:11.5}}, // demande 1
+  {t:14.0,x:67, y:1271,from:{x:420,y:1000,t:13.5}}, // 1. Confirmer le financement
+];
+window.setTaps=x=>{TAPS=x};
+
+function chat(t,list){list.forEach(m=>{const on=t>=m.t;m.el.style.display=on?'block':'none';
+  if(on){const k=P(t,m.t,m.t+0.28);m.el.style.opacity=cl(k*2);
+    m.el.style.transform=`translateY(${(1-eo(k))*30}px) scale(${0.92+0.08*eb(k)})`;
+    m.el.style.transformOrigin=m.d==='in'?'left bottom':'right bottom';
+    m.el.querySelectorAll('.hl').forEach(h=>{const hk=P(t,Math.max(m.t,0)+0.6,Math.max(m.t,0)+0.9);h.style.background=`rgba(244,217,138,${0.85*hk})`;});
+    if(m.win){const w=P(t,m.t+0.3,m.t+0.6);m.el.classList.toggle('win',w>0);m.el.style.boxShadow=w>0?`0 0 0 ${5*w}px #E8C15C,0 10px 30px rgba(232,193,92,${.45*w})`:'';}
+  }});}
+
+window.render=function(t){
+  vis('s1',t<3.0); vis('s2',t>=2.75&&t<6.25); vis('s3',t>=5.75&&t<16.25); vis('s5',t>=15.75);
+  if(t<3.0){
+    $('s1').style.opacity=1-P(t,2.75,3.0);
+    S('hook',popIn(t,0.1,.4,50));
+    const kc=eo(P(t,0.05,0.5)); S('cal',{o:kc,y:(1-kc)*120,s:0.9+0.1*kc});
+    $('calRings').style.opacity=kc; $('calRings').style.transform=`translateY(${(1-kc)*120}px)`;
+    const days=[21,22,23,24,25]; const idx=Math.min(4,Math.max(0,Math.floor((t+0.0)/0.5)-0));
+    const i=t<0.5?0:Math.min(4,Math.floor(t/0.5)); const fl=P(t,i*0.5,i*0.5+0.18);
+    const body=$('calBody'); body.querySelectorAll('.dnum').forEach(e=>e.remove());
+    const cur=document.createElement('div');cur.className='dnum';cur.textContent=days[i];
+    cur.style.transform=`translateY(${(1-eo(fl))*-60}px)`;cur.style.opacity=i===0?1:fl;
+    if(i===4)cur.style.color='#0B4F3F';
+    body.appendChild(cur);
+    if(i>0&&fl<1){const prev=document.createElement('div');prev.className='dnum';prev.textContent=days[i-1];
+      prev.style.transform=`translateY(${eo(fl)*60}px)`;prev.style.opacity=1-fl;body.appendChild(prev);}
+    const rk=P(t,2.05,2.4); $('ring').style.opacity=t>=2.05?1:0; $('ring').style.transform=`scale(${0.5+0.5*eb(rk)})`;
+  }
+  if(t>=2.75&&t<6.25){
+    $('s2').style.opacity=t<6?P(t,2.75,3.0):1;
+    const k=P(t,3.0,3.5); const out=eio(P(t,5.75,6.0));
+    S('logo',{o:cl(k*2.5)*(1-out),s:0.6+0.4*eb(k)});
+    const w=popIn(t,3.2,.35,30); S('word',{o:w.o*(1-out),y:w.y});
+    const g=popIn(t,3.4,.4,40); S('tag',{o:g.o*(1-out),y:g.y-out*50});
+  }
+  if(t>=5.75&&t<16.25){
+    $('s3').style.opacity=P(t,5.75,6.0)*(1-P(t,15.75,16.0));
+    const ph=eo(P(t,6.0,6.6)); S('phone',{y:(1-ph)*1600});
+    [['cap1',6.3,10.75],['cap2',11.2,15.75]].forEach(([id,a,b])=>{const i=popIn(t,a,.35,30);const o=eio(P(t,b,b+.25));S(id,{o:i.o*(1-o),y:i.y-o*30});});
+    const swA=eio(P(t,10.75,11.0)), inB=eo(P(t,11.0,11.3));
+    S('chatA',{o:1-swA,x:-swA*200}); S('chatB',{o:t<11?0:inB,x:(1-inB)*200});
+    chat(t,A); chat(t,B);
+    // réponses rapides
+    const q=QR.find(([a,b])=>t>=a&&t<b); const qr=$('qr');
+    const key=q?q[0]:'';
+    if(qr.dataset.k!==String(key)){qr.innerHTML=q?q[2].map(x=>`<span class="qbtn">${x}</span>`).join(''):'';qr.dataset.k=String(key);}
+    if(q){const k=P(t,q[0],q[0]+0.25);[...qr.children].forEach((b,i)=>{S(b,{o:cl(k*2),s:0.7+0.3*eb(k)});
+      b.classList.toggle('on',i===0&&TAPS.some(tp=>t>=tp.t&&t<tp.t+0.2));});}
+    // saisie
+    const typing=t>=TYPE.a&&t<7.5; const n=Math.min(TYPE.txt.length,Math.floor((t-TYPE.a)/0.125)+1);
+    $('inp').innerHTML=typing?esc(TYPE.txt.slice(0,n))+'<span class="caret"></span>':'<span class="ph">Message</span>';
+    // doigt
+    let f=null; for(const tp of TAPS){ if(t>=tp.from.t-0.25&&t<tp.t+0.45){f=tp;} }
+    const fe=$('finger'), r=$('rip');
+    if(f){
+      const mv=eio(P(t,f.from.t,f.t-0.08));
+      const x=f.from.x+(f.x-f.from.x)*mv, y=f.from.y+(f.y-f.from.y)*mv;
+      const appear=P(t,f.from.t-0.25,f.from.t), gone=P(t,f.t+0.2,f.t+0.45);
+      const press=(t>=f.t-0.08&&t<f.t+0.12)?0.82:1;
+      fe.style.left=x+'px'; fe.style.top=y+'px'; fe.style.opacity=appear*(1-gone); fe.style.transform=`scale(${press})`;
+      const rk=P(t,f.t,f.t+0.4); r.style.left=f.x+'px'; r.style.top=f.y+'px';
+      r.style.opacity=(t>=f.t)?(1-rk)*0.9:0; r.style.transform=`scale(${1+rk*1.6})`;
+    } else {fe.style.opacity=0; r.style.opacity=0;}
+  }
+  if(t>=15.75){
+    $('s5').style.opacity=P(t,15.75,16.0);
+    const k=P(t,16.0,16.5); S('oLogo',{o:cl(k*2.5),s:0.6+0.4*eb(k)});
+    S('oWord',popIn(t,16.2,.35,30)); S('oLine',popIn(t,16.5,.4,40)); S('oChip',popIn(t,17.0,.35,30));
+  }
+};
+window.render(0);
+</script>
+</body>
+</html>
